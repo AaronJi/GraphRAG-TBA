@@ -1,0 +1,59 @@
+{
+  "theory": "Maslow",
+  "theory_name": "Maslow's Hierarchy of Needs",
+  "source": {
+    "table": 8
+  },
+  "principles": [
+    {
+      "id": "maslow_01",
+      "table_index": 1,
+      "text": "When physiological needs conflict with safety needs, prioritize physiological needs."
+    },
+    {
+      "id": "maslow_02",
+      "table_index": 2,
+      "text": "Give physiological needs precedence over love and belonging."
+    },
+    {
+      "id": "maslow_03",
+      "table_index": 3,
+      "text": "You should meet physiological needs before attending to self-esteem."
+    },
+    {
+      "id": "maslow_04",
+      "table_index": 4,
+      "text": "If physiological needs and self-actualization compete, put physiological needs first."
+    },
+    {
+      "id": "maslow_05",
+      "table_index": 5,
+      "text": "You should prioritize the need for safety over love and belonging."
+    },
+    {
+      "id": "maslow_06",
+      "table_index": 6,
+      "text": "When safety and self-esteem come into conflict, favor safety."
+    },
+    {
+      "id": "maslow_07",
+      "table_index": 7,
+      "text": "Place safety needs ahead of self-actualization needs."
+    },
+    {
+      "id": "maslow_08",
+      "table_index": 8,
+      "text": "You should prioritize love and belonging over self-esteem."
+    },
+    {
+      "id": "maslow_09",
+      "table_index": 9,
+      "text": "If love and belonging conflict with self-actualization, give priority to love and belonging."
+    },
+    {
+      "id": "maslow_10",
+      "table_index": 10,
+      "text": "Address the need for self-esteem before pursuing self-actualization."
+    }
+  ]
+}

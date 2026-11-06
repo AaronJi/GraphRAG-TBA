@@ -1,0 +1,79 @@
+encoding_model: cl100k_base
+llm:
+  api_key: ${GRAPHRAG_API_KEY}
+  type: openai_chat
+  api_base: https://api.minimaxi.com/v1
+  model: MiniMax-Text-01
+  model_supports_json: false
+  temperature: 0.0
+  max_tokens: 2400
+  request_timeout: 90.0
+  max_retries: 2
+  max_retry_wait: 10.0
+  concurrent_requests: 4
+async_mode: asyncio
+parallelization:
+  stagger: 0.1
+  num_threads: 4
+embeddings:
+  target: none
+  llm:
+    type: openai_embedding
+    api_key: EMPTY
+    model: bge-m3
+skip_workflows:
+- generate_text_embeddings
+# index.py supplies the text documents in memory.
+input:
+  type: file
+  file_type: text
+  base_dir: input
+  file_encoding: utf-8
+  file_pattern: .*\.txt$
+chunks:
+  size: 1800
+  overlap: 100
+  group_by_columns:
+  - id
+cache:
+  type: file
+  base_dir: cache
+reporting:
+  type: file
+  base_dir: logs
+storage:
+  type: file
+  base_dir: output/${timestamp}
+entity_extraction:
+  prompt: prompts/entity_extraction.txt
+  entity_types:
+  - CoreNeedLevel
+  - NeedState
+  - NeedResource
+  - HierarchicalConflict
+  - GrowthObstacle
+  - Value
+  - Action
+  - Situation
+  - Principle
+  max_gleanings: 1
+summarize_descriptions:
+  prompt: prompts/summarize_descriptions.txt
+  max_length: 300
+claim_extraction:
+  enabled: false
+community_reports:
+  prompt: prompts/community_report.txt
+  max_length: 1200
+  max_input_length: 8000
+cluster_graph:
+  max_cluster_size: 1000
+  strategy:
+    type: leiden
+    max_cluster_size: 1000
+    seed: 20261020
+    use_lcc: false
+embed_graph:
+  enabled: false
+umap:
+  enabled: false

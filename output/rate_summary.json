@@ -1,0 +1,40 @@
+[
+  {
+    "theory": "Maslow",
+    "method": "Direct",
+    "expected_choices": 58,
+    "total_dilemmas": 100,
+    "valid_choices": 100,
+    "invalid_or_missing_choices": 0,
+    "rate": 0.58,
+    "rate_percent": 58.0,
+    "annotation_ceiling": 1.0,
+    "both_actions_expected": 0,
+    "neither_action_expected": 0,
+    "complete": true,
+    "model": "MiniMax-Text-01",
+    "run_type": "random_100_full_index_overlap",
+    "protocol_version": "minimax-rate-100-v1",
+    "completed_predictions": 100,
+    "updated_at": "2026-11-02T11:12:21.184456+00:00"
+  },
+  {
+    "theory": "Maslow",
+    "method": "TBA",
+    "expected_choices": 67,
+    "total_dilemmas": 100,
+    "valid_choices": 100,
+    "invalid_or_missing_choices": 0,
+    "rate": 0.67,
+    "rate_percent": 67.0,
+    "annotation_ceiling": 1.0,
+    "both_actions_expected": 0,
+    "neither_action_expected": 0,
+    "complete": true,
+    "model": "MiniMax-Text-01",
+    "run_type": "random_100_full_index_overlap",
+    "protocol_version": "minimax-rate-100-v1",
+    "completed_predictions": 100,
+    "updated_at": "2026-11-02T11:12:21.186212+00:00"
+  }
+]

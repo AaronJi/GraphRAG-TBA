@@ -1,0 +1,7 @@
+{
+  "candidate_tuples": 100680,
+  "accepted_tuples": 11121,
+  "documents": 4326,
+  "threshold": 70,
+  "threshold_source": "reproduction assumption; not specified in paper"
+}
