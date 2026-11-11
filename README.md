@@ -1,4 +1,4 @@
-# Maslow TBA Baseline
+# GraphRAG-TBA: Code, Derived Data, and Experimental Outputs
 
 This repository provides a quick way to reproduce the TBA pipeline. The paper
 uses **Llama-3.3-70B-Instruct** for indexing and querying, and **GPT-4o** for
