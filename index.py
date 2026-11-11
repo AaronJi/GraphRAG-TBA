@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import json
 import time
+from unittest.mock import patch
 
 from data import INPUT, OUTPUT, ROOT, read_jsonl
 
@@ -54,12 +55,27 @@ def make_documents():
 async def build_index(config, dataset, run_id, reporter):
     from graphrag.index.emit.types import TableEmitterType
     from graphrag.index.run import run_pipeline_with_config
+    from graphrag.llm.openai import openai_chat_llm
 
-    async for result in run_pipeline_with_config(
-        config, dataset=dataset, run_id=run_id, emit=[TableEmitterType.Parquet], progress_reporter=reporter,
-    ):
-        if result.errors:
-            raise RuntimeError(f"GraphRAG workflow failed: {result.workflow}")
+    legacy_completion_args = openai_chat_llm.get_completion_llm_args
+
+    def completion_args(parameters, configuration):
+        args = legacy_completion_args(parameters, configuration)
+        args["max_completion_tokens"] = args.pop("max_tokens")
+        args["reasoning_effort"] = "none"
+        defaults = {"frequency_penalty": 0, "presence_penalty": 0, "top_p": 1, "n": 1}
+        for name, default in defaults.items():
+            if args.get(name) in (None, default):
+                args.pop(name, None)
+        return args
+
+    # Adapt GraphRAG 0.5.0's request parameters for the duration of this run.
+    with patch.object(openai_chat_llm, "get_completion_llm_args", completion_args):
+        async for result in run_pipeline_with_config(
+            config, dataset=dataset, run_id=run_id, emit=[TableEmitterType.Parquet], progress_reporter=reporter,
+        ):
+            if result.errors:
+                raise RuntimeError(f"GraphRAG workflow failed: {result.workflow}")
 
 
 def main():
@@ -84,8 +100,8 @@ def main():
     pipeline = create_pipeline_config(settings)
     if args.dry_run:
         return
-    if settings.llm.api_key in (None, "", "your_minimax_api_key", "${GRAPHRAG_API_KEY}"):
-        parser.error("Set GRAPHRAG_API_KEY to run indexing")
+    if settings.llm.api_key in (None, "", "your_openai_api_key", "${OPENAI_API_KEY}"):
+        parser.error("Set OPENAI_API_KEY in the environment or .env to run indexing")
     enable_logging_with_config(settings)
     reporter = create_progress_reporter(ReporterType(args.reporter))
     try:

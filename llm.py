@@ -1,4 +1,4 @@
-"""The OpenAI-compatible JSON client used by online queries."""
+"""The OpenAI Chat Completions client used by online queries."""
 
 import hashlib
 import json
@@ -27,9 +27,9 @@ def extract_json(text):
 class Client:
     def __init__(self, root, cache):
         load_dotenv(root / ".env")
-        key = os.getenv("GRAPHRAG_API_KEY")
-        if key in (None, "", "your_minimax_api_key"):
-            raise ValueError("Set GRAPHRAG_API_KEY in the environment or .env")
+        key = os.getenv("OPENAI_API_KEY")
+        if key in (None, "", "your_openai_api_key"):
+            raise ValueError("Set OPENAI_API_KEY in the environment or .env")
         config = yaml.safe_load((root / "settings.yaml").read_text(encoding="utf-8"))
         self.settings = config["llm"]
         self.endpoint = os.path.expandvars(self.settings["api_base"])
@@ -40,8 +40,13 @@ class Client:
         self.cache.mkdir(parents=True, exist_ok=True)
 
     def call(self, stage, messages, validate, max_tokens):
-        request = {"model": self.settings["model"], "temperature": self.settings["temperature"],
-                   "messages": messages, "max_tokens": max_tokens}
+        request = {
+            "model": self.settings["model"],
+            "messages": messages,
+            "temperature": self.settings["temperature"],
+            "max_completion_tokens": max_tokens,
+            "reasoning_effort": "none",
+        }
         estimated = sum(len(self.encoding.encode(m["content"])) + 8 for m in messages) + 16
         if estimated + max_tokens > 16000:
             raise ValueError(f"Context budget exceeded in {stage}")

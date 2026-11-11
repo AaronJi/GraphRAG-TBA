@@ -2,9 +2,8 @@
 
 This repository provides a quick way to reproduce the TBA pipeline. The paper
 uses **Llama-3.3-70B-Instruct** for indexing and querying, and **GPT-4o** for
-association, behavior, and response scoring. This reproduction uses
-**MiniMax-Text-01** for association scoring, indexing, and querying. Offline
-replay computes the expected-behavior rate from saved choices and dataset labels.
+association, behavior, and response scoring. The live index and query scripts
+use **GPT-5.6 Luna** through the OpenAI API.
 
 This release covers **Maslow**. The bundled **100 cases** form a subset of the
 Maslow test set for quick replay from saved intermediate files. The cases also
@@ -23,8 +22,9 @@ python replay.py
 Replay reads the saved level-0 community reports, skills, and A/B predictions
 from `output/`. It verifies the association threshold $\tau=70$, reapplies
 the skill threshold $\epsilon=70$ and $K=3$, and compares Direct and TBA on the
-same 100 cases without API calls. The saved run yields **58/100 for Direct** and
-**67/100 for TBA**, a difference of 9 percentage points.
+same 100 cases without API calls. In a previous reproduction run, TBA's
+expected-behavior rate exceeded that of the Direct baseline by
+**9 percentage points**.
 
 ## Project layout
 
@@ -39,10 +39,16 @@ same 100 cases without API calls. The saved run yields **58/100 for Direct** and
 
 ## Live setup
 
-Indexing and online querying require an OpenAI-compatible endpoint serving
-`MiniMax-Text-01`. Set `GRAPHRAG_API_KEY` in the environment or in `.env`.
-The bundled `.env` contains a placeholder. Both scripts use the `llm` section
-in `settings.yaml` for the endpoint and model.
+Set `OPENAI_API_KEY` in your environment or in a `.env` file at the repository
+root. Replace the placeholder with a key from a project that can use
+[GPT-5.6 Luna](https://developers.openai.com/api/docs/models/gpt-5.6-luna).
+
+```dotenv
+OPENAI_API_KEY=your_openai_api_key
+```
+
+Both scripts read the endpoint and model from the `llm` section in
+`settings.yaml`. They call OpenAI Chat Completions with `reasoning_effort=none`.
 
 ## Index
 
@@ -51,9 +57,10 @@ python index.py
 ```
 
 The script expands each action into its annotated values and uses the saved
-association scores to retain principles at $\tau=70$. It assembles the 4,326
-historical index documents in memory, passes them to the native GraphRAG 0.5.0
-pipeline, and writes the new index to `output/YYYYMMDD-HHMMSS/`.
+association scores to retain principles at $\tau=70$. It assembles 4,326
+documents in memory and passes them to GraphRAG 0.5.0. The pipeline uses GPT
+for entity and relationship extraction, description summarization, and
+community reports, then writes the new index to `output/YYYYMMDD-HHMMSS/`.
 Use `python index.py --dry-run` to validate the input and configuration
 without model calls.
 
@@ -64,8 +71,8 @@ python query.py
 python query.py --index-dir output/YYYYMMDD-HHMMSS
 ```
 
-The first command uses the historical index in `output/`. The second selects
-a new index. Both run Direct and TBA on the bundled test subset. The TBA query
-generates and scores one skill per level-0 community report, then uses up to
-three eligible skills for its final choice. New skills, predictions, and rates
-are saved in `output/query/`.
+The first command uses GPT with the historical index in `output/`. The second
+uses GPT with the newly built index. Both run Direct and TBA on the bundled test
+subset. The TBA query generates and scores one skill per level-0 community
+report, then uses up to three eligible skills for its final choice. New skills,
+predictions, and rates are saved in `output/query/`.

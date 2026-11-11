@@ -1,9 +1,9 @@
 encoding_model: cl100k_base
 llm:
-  api_key: ${GRAPHRAG_API_KEY}
+  api_key: ${OPENAI_API_KEY}
   type: openai_chat
-  api_base: https://api.minimaxi.com/v1
-  model: MiniMax-Text-01
+  api_base: https://api.openai.com/v1
+  model: gpt-5.6-luna
   model_supports_json: false
   temperature: 0.0
   max_tokens: 2400
